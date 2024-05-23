@@ -1,0 +1,67 @@
+/* create a table of Survivor contestants who competed on Season 40, Winners at War. 
+They each get a unique ID, their name, sex, bday, the first season they competed on, 
+and the season they won entered into their field. */
+
+DROP TABLE IF EXISTS contestant_stats;
+
+CREATE TABLE contestant_stats(
+    contestant_id INT,
+    contestant_name VARCHAR(50),
+    contestant_sex VARCHAR(1),
+    contestant_birthday DATE,
+    first_season INT,
+    season_won INT
+);
+
+-- insert info on all 20 contestants from the season.
+
+INSERT INTO contestant_stats VALUES
+    (1, 'Boston Rob', 'M', '1975-12-25', 4, 22),
+    (2, 'Parvati Shallow', 'F', '1982-09-21', 13, 16),
+    (3, 'Tony Vlachos', 'M', '1973-09-10', 28, 28),
+    (4, 'Adam Klein', 'M', '1991-01-15', 33, 33),
+    (5, 'Danni Boatwright', 'F', '1975-07-13', 11, 11),
+    (6, 'Michele Fitzgerald', 'F', '1990-05-05', 32, 32),
+    (7, 'Natalie Anderson', 'F', '1986-04-11', 29, 29),
+    (8, 'Tyson Apostol', 'M', '1979-06-17', 18, 27),
+    (9, 'Amber Mariano', 'F', '1978-08-11', 2, 7),
+    (10, 'Ethan Zohn', 'M', '1973-11-12', 3, 3),
+    (11, 'Sandra Diaz-Twine', 'F', '1974-07-30', 8, 8),
+    (12, 'Yul Kwon', 'M', '1975-02-14', 13, 13),
+    (13, 'Wendell Holland', 'M', '1984-03-08', 36, 36),
+    (14, 'Sophie Clarke', 'F', '1989-07-10', 23, 23),
+    (15, 'Kim Spradlin-Wolfe', 'F', '1983-01-30', 24, 24),
+    (16, 'Jeremy Collins', 'M', '1978-04-20', 29, 31),
+    (17, 'Nick Wilson', 'M', '1990-06-11', 37, 37),
+    (18, 'Denise Stapley', 'F', '1971-01-01', 25, 25),
+    (19, 'Ben Dreibergen', 'M', '1983-01-01', 35, 35),
+    (20, 'Sarah Lacina', 'F', '1983-10-19', 28, 34
+);
+
+/* often contestants who first competed on the earlier seasons ("old school" players) use different strategies 
+than those in recent seasons ("new school" players). I wanted to answer the question “How many players on this 
+season, season 40, are old school and who are they? Order by first season in ascending order.” but allow the user 
+to define what they mean by “old school”. My dynamic procedure returns the list of old school contestants, with the 
+number of rows showing how many. */
+
+DROP PROCEDURE IF EXISTS find_old_school;
+
+DELIMITER //
+
+CREATE PROCEDURE find_old_school(max_old_school INT)
+BEGIN
+ DECLARE sql_statement VARCHAR(255);
+    SET @sql_statement = CONCAT('SELECT * FROM contestant_stats WHERE first_season <= ', 
+                                max_old_school,
+                               ' ORDER BY first_season ASC');
+    PREPARE test FROM @sql_statement;
+    EXECUTE test;
+    DEALLOCATE PREPARE test;
+END//
+
+DELIMITER ;
+
+-- test the procedure
+CALL find_old_school(20);
+CALL find_old_school(27);
+CALL find_old_school(10); 
