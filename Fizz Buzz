@@ -1,0 +1,33 @@
+-- creating a function that takes an integer and returns "Fizz" for multiples of 2, "Buzz" for multiples of 5, and "FizzBuzz" for multiples of both
+
+-- drops function if one already exists with this name
+DROP FUNCTION IF EXISTS fizz_buzz;
+
+DELIMITER //
+
+-- create function using IF statements
+CREATE FUNCTION fizz_buzz (input INT)
+RETURNS VARCHAR(50)
+DETERMINISTIC NO SQL
+BEGIN
+DECLARE output VARCHAR(50);
+IF input % 5 = 0 AND input % 3 = 0 THEN 
+  set output = 'FizzBuzz';
+ELSEIF input % 3 = 0 THEN
+  set output = 'Fizz';
+ELSEIF input % 5 = 0 THEN
+  set output = 'Buzz';
+ELSE
+  set output = CONCAT(input);
+END IF; 
+
+return output;
+END //
+
+DELIMITER ;
+
+-- test function
+SELECT fizz_buzz(33);
+SELECT fizz_buzz(40);
+SELECT fizz_buzz(45);
+SELECT fizz_buzz(47);
